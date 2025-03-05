@@ -1,22 +1,21 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-alpine 
+# Use a non-Alpine Python image
+FROM python:3.11-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies (Alpine uses apk)
-RUN apk add --no-cache \
-    build-base \
+# Install system dependencies (Debian-based)
+RUN apt-get update && apt-get install -y \
     ffmpeg \
-    libsndfile
+    libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy only requirements first to leverage Docker caching
 COPY requirements.txt ./
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip
-
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire project after installing dependencies
 COPY . .

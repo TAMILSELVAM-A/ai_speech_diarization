@@ -60,17 +60,21 @@ def diarize_audio(audio_path: str) -> List[Dict[str, str]]:
         raise ValueError("Transcription failed. Check OpenAI Whisper API response.")
 
     try:
-        diarization = pipeline(processed_audio,max_speakers = 4)
+        diarization = pipeline(processed_audio, max_speakers=4)
         diarized_segments = []
+        seen_texts = set()  # To track unique text segments
 
         for turn, _, speaker in diarization.itertracks(yield_label=True):
             segment_text = extract_text_for_segment(transcript["segments"], turn.start, turn.end)
-            diarized_segments.append({
-                "start": str(round(turn.start, 2)),
-                "end": str(round(turn.end, 2)),
-                "speaker": speaker,
-                "text": segment_text
-            })
+
+            if segment_text not in seen_texts:  # Check for duplicates
+                seen_texts.add(segment_text)  # Store unique text
+                diarized_segments.append({
+                    "start": str(round(turn.start, 2)),
+                    "end": str(round(turn.end, 2)),
+                    "speaker": speaker,
+                    "text": segment_text
+                })
 
         speaker_mapping = identify_speakers_with_openai(diarized_segments)
         for segment in diarized_segments:
@@ -88,6 +92,7 @@ def extract_text_for_segment(segments, start_time, end_time):
             text.append(seg["text"])
     
     return " ".join(text) if text else "..."
+
 
 def identify_speakers_with_openai(diarized_segments: List[Dict[str, str]]) -> Dict[str, str]:
     openai.api_key = openai_api_key

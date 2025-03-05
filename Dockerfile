@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     libsndfile
 
 # Copy only requirements first to leverage Docker caching
-COPY requirements.txt .
+COPY requirements.txt /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

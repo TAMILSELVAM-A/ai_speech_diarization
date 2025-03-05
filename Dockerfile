@@ -4,12 +4,11 @@ FROM python:3.11-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
+# Install system dependencies (Alpine uses apk)
+RUN apk add --no-cache \
+    build-base \
     ffmpeg \
-    libsndfile1 \
-    && rm -rf /var/lib/apt/lists/*
+    libsndfile
 
 # Copy only requirements first to leverage Docker caching
 COPY requirements.txt /app/
@@ -27,4 +26,4 @@ EXPOSE 8000
 ENV PORT 8000
 
 # Start the application with proper port binding
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

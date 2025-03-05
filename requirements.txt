@@ -7,9 +7,11 @@ python-dotenv
 librosa
 soundfile
 pyannote.audio
+onnxruntime
 
 # OpenAI Integration
 openai==0.28
+
 
 # Additional Dependencies
 typing

@@ -20,11 +20,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the entire project after installing dependencies
 COPY . .
 
-# Expose the port that Cloud Run will use
-EXPOSE 8000
-
-# Ensure Cloud Run provides the PORT dynamically
-ENV PORT 8000
-
 # Start the application with proper port binding
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

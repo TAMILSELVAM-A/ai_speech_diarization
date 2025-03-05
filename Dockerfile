@@ -11,13 +11,13 @@ RUN apk add --no-cache \
     libsndfile
 
 # Copy only requirements first to leverage Docker caching
-COPY requirements.txt /app/
+COPY requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire project after installing dependencies
-COPY . /app
+COPY . .
 
 # Expose the port that Cloud Run will use
 EXPOSE 8000

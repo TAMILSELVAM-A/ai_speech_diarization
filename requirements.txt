@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+
+# Audio Processing
+librosa
+soundfile
+pyannote.audio
+
+# OpenAI Integration
+openai==0.28
+
+# Additional Dependencies
+typing

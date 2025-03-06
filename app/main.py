@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from api.v1.endpoints import diarization
+import os
 
 app = FastAPI(title="Speaker Diarization API", version="1.0.0")
 
@@ -20,4 +21,6 @@ def read_root():
     return {"message": "Welcome to the Speaker Diarization API!"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import uvicorn
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=port)

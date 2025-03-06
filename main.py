@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from api.v1.endpoints import diarization
+from app.api.v1.endpoints import diarization
 import os
 
 app = FastAPI(title="Speaker Diarization API", version="1.0.0")

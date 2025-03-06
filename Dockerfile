@@ -18,10 +18,10 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port the app runs on
-EXPOSE 8000
+EXPOSE 8001
 
 # Define environment variable for production
-ENV PORT 8000
+ENV PORT 8001
 
 # Run the application
 CMD exec uvicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app

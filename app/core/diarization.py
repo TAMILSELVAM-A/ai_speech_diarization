@@ -10,16 +10,19 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+LOCAL_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../models/diarization/config.yaml"))
+
 load_dotenv()
 
-hf_auth_token = os.getenv('HF_AUTH_TOKEN')
+# hf_auth_token = os.getenv('HF_AUTH_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
-
 try:
-    pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.0", use_auth_token=hf_auth_token)
-    logger.info("Speaker diarization pipeline loaded successfully!")
+    if not os.path.exists(LOCAL_MODEL_PATH):
+        raise FileNotFoundError(f"Model directory not found: {LOCAL_MODEL_PATH}")
+    pipeline = Pipeline.from_pretrained(LOCAL_MODEL_PATH)
+    logger.info("Speaker diarization pipeline loaded successfully from local storage!")
 except Exception as e:
-    logger.error(f"Failed to load diarization pipeline: {e}")
+    logger.error(f"Failed to load diarization pipeline from local storage: {e}")
     pipeline = None
 
 def convert_audio_to_wav(input_audio: str) -> str:

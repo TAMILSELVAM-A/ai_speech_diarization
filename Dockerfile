@@ -1,28 +1,27 @@
-# Use a non-Alpine Python image
+# Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies (Debian-based)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
+    build-essential \
     ffmpeg \
     libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements first to leverage Docker caching
-COPY requirements.txt ./
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project after installing dependencies
-COPY . .
+# Expose the port the app runs on
+EXPOSE 8000
 
-# Set the PORT environment variable (default to 8080 for Cloud Run)
-ENV PORT=8080
-EXPOSE $PORT
+# Define environment variable for production
+ENV PORT 8000
 
-# Start the application with proper port binding
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "$PORT"]
+# Run the application
+CMD exec uvicorn main:app --host 0.0.0.0 --port $PORT

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from core.diarization import diarize_audio
+from app.core.diarization import diarize_audio
 from typing import List, Dict
 import tempfile
 import os

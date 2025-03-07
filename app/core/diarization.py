@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 LOCAL_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../models/diarization/config.yaml"))
+logger.info(f"local Storage path : {LOCAL_MODEL_PATH}")
 
 load_dotenv()
 

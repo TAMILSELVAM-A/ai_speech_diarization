@@ -10,20 +10,20 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-LOCAL_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../models/diarization/config.yaml"))
-logger.info(f"local Storage path : {LOCAL_MODEL_PATH}")
+
 
 load_dotenv()
 
-# hf_auth_token = os.getenv('HF_AUTH_TOKEN')
+hf_auth_token = os.getenv('HF_AUTH_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
+
 try:
-    if not os.path.exists(LOCAL_MODEL_PATH):
-        raise FileNotFoundError(f"Model directory not found: {LOCAL_MODEL_PATH}")
-    pipeline = Pipeline.from_pretrained(LOCAL_MODEL_PATH)
-    logger.info("Speaker diarization pipeline loaded successfully from local storage!")
+    pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.0", use_auth_token=hf_auth_token)
+    logger.info("Speaker diarization pipeline loaded successfully!")
+
+
 except Exception as e:
-    logger.error(f"Failed to load diarization pipeline from local storage: {e}")
+    logger.error(f"Failed to load diarization pipeline: {e}")
     pipeline = None
 
 def convert_audio_to_wav(input_audio: str) -> str:
@@ -56,10 +56,10 @@ def transcribe_audio_with_openai(audio_path: str) -> Dict:
 def diarize_audio(audio_path: str) -> List[Dict[str, str]]:
     if pipeline is None:
         raise ValueError("Diarization pipeline is not loaded. Check logs for errors.")
-    
+
     processed_audio = convert_audio_to_wav(audio_path)
     transcript = transcribe_audio_with_openai(processed_audio)
-    
+
     if transcript is None:
         raise ValueError("Transcription failed. Check OpenAI Whisper API response.")
 
@@ -94,7 +94,7 @@ def extract_text_for_segment(segments, start_time, end_time):
     for seg in segments:
         if (seg["start"] <= end_time and seg["end"] >= start_time):
             text.append(seg["text"])
-    
+
     return " ".join(text) if text else "..."
 
 
@@ -127,4 +127,3 @@ def identify_speakers_with_openai(diarized_segments: List[Dict[str, str]]) -> Di
     except Exception as e:
         logger.error(f"Error identifying speakers: {e}")
         return {}
-        

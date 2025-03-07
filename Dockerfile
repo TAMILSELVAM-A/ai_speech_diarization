@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /app
 
 # Expose the port the app will run on
-EXPOSE 8080
+EXPOSE 8000
 
 # Install Python dependencies
 # It's a good practice to copy only requirements.txt first to take advantage of Docker layer caching
